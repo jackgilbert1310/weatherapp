@@ -50,6 +50,14 @@
             font-size: 10em;
         }
 
+        #addToWatchlist span {
+            font-size: 32px;
+            color: #000;
+            font-weight: bold;
+            padding: 0;
+            margin: 0;
+        }
+
     </style>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
@@ -75,9 +83,11 @@
 
             <div class="row">
                 <div class="col-12 text-center details">
+                    <a href="javascript:void(0)" id="addToWatchlist" data-location="">Watchlist &plus;</a>
                     <h1 id="locationTitle"><span id="locationCountry"></span></h1>
                     <p id="currentDate"></p>
                     <h2 id="locationTemp"></h2>
+                    <img src="" id="weatherIcon">
                     <h1 id="locationMainStatus"></h1>
                     <hr />
                 </div>
@@ -97,6 +107,7 @@
         var locationInputEl = document.getElementById('locationInput');
         var searchLocationBtnEl = document.getElementById('searchLocation');
         var errorBanner = document.getElementById('errorBanner');
+        var addToWatchlistBtn = document.getElementById('addToWatchlist');
 
         const API_KEY = "a079101f1ffd163a4a5b2b4b8e3cc1d4";
 
@@ -111,15 +122,18 @@
         }
 
         function showData(data) {
+            console.log(data);
+
             if (data.cod == "200") {
                 saveToLocalStorage(data.name);
+                addToWatchlist.dataset.location = data.name;
                 errorBanner.style.display = "none";
                 var locationTitle = document.getElementById('locationTitle');
                 var locationMainStatus = document.getElementById('locationMainStatus');
                 var locationTemp = document.getElementById('locationTemp');
                 var currentDate = document.getElementById('currentDate');
                 
-                // getWeatherIcon(data.weather[0].icon);
+                getWeatherIcon(data.weather[0].icon);
                 
                 locationTitle.innerHTML = data.name + ", " + data.sys.country;
                 locationMainStatus.innerHTML = data.weather[0].description;
@@ -147,11 +161,20 @@
             }
         }
 
-        // function getWeatherIcon(iconCode) {
-        //     var icon = document.createElement('img');
-        //     icon.src = `http://openweathermap.org/img/wn/${iconCode}@2x.png`;
-        //     locationMainStatus.appendChild(icon);
-        // }
+        function getWeatherIcon(iconCode) {
+            var icon = document.getElementById('weatherIcon');
+            icon.src = `http://openweathermap.org/img/wn/${iconCode}@2x.png`;
+        }
+
+        function addToWatchList() {
+            console.log(this.dataset.location);
+            // if (localStorage.watchList) {
+            //     localStorage.watchList.push(this.dataset.location);
+            // } else {
+            //     localStorage.setItem("watchList", {});
+            // }
+            // console.log(localStorage.watchList);
+        }
 
         function showError(message) {
             var errorTextEl = document.getElementById('errorText');
@@ -160,6 +183,7 @@
         }
 
         searchLocationBtnEl.addEventListener('click', searchForLocation);
+        addToWatchlistBtn.addEventListener('click', addToWatchList);
     </script>
 
 </body>
