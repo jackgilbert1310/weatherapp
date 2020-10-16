@@ -1,0 +1,189 @@
+<!-- 
+    SEARCH YOUR LOCATION AND SEE THE WEATHER
+    PIN LOCATIONS FOR QUICK ACCESS TO EACH ONE
+    DASHBOARD SORT OF LOOK 
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+
+    <style>
+        html,
+        body,
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            /* background-color: #83CAFE!important; */
+        }
+
+        .errorBanner {
+            display: none;
+            width: 100%;
+            height: 50px;
+            background-color: red;
+        }
+
+        #errorText {
+            text-align: center;
+            color: #fff;
+            font-size: 22px;
+            line-height: 50px;
+        }
+
+        #searchLocation {
+            width: 100%;
+        }
+
+        .details {
+            color: #000;
+        }
+
+        #locationTemp {
+            font-size: 10em;
+        }
+
+    </style>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+</head>
+<body>
+
+    <div id="app">
+
+        <div class="errorBanner" id="errorBanner">
+            <p id="errorText"></p>
+        </div>
+
+        <div class="container">
+            <div class="row mt-3">
+                
+                <div class="col-10">
+                    <input type="text" placeholder="Enter Location..." id="locationInput" class="form-control">
+                </div>
+                <div class="col-2 pl-0">
+                    <button id="searchLocation" class="btn btn-light">Search</button>
+                </div>
+                
+            </div>
+
+            <div class="row">
+
+                <div class="col-12 text-center details">
+                    <h1 id="locationTitle"><span id="locationCountry"></span></h1>
+    
+                    <p id="currentDate"></p>
+
+                    <h2 id="locationTemp"></h2>
+                    
+                    <h1 id="locationMainStatus"></h1>
+
+                    <hr />
+                </div>
+
+            </div>
+
+            <div class="row">
+
+                <div class="col-12 text-center">
+                    <h3>My Locations</h3>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script>
+        var app = document.getElementById('app');
+        var locationInputEl = document.getElementById('locationInput');
+        var searchLocationBtnEl = document.getElementById('searchLocation');
+        var errorBanner = document.getElementById('errorBanner');
+
+        const API_KEY = "a079101f1ffd163a4a5b2b4b8e3cc1d4";
+
+ 
+            console.log(localStorage.lastSearch);
+
+            if (localStorage.lastSearch) {
+                getWeather(localStorage.lastSearch);
+            }
+        
+
+
+
+        async function getWeather(location) {
+            await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${API_KEY}&units=metric`)
+                .then(response => response.json())
+                .then(data => showData(data));
+        }
+
+        function showData(data) {
+            console.log(data);
+            
+            if (data.cod == "200") {
+                saveToLocalStorage(data.name);
+                errorBanner.style.display = "none";
+                var locationTitle = document.getElementById('locationTitle');
+                var locationMainStatus = document.getElementById('locationMainStatus');
+                var locationTemp = document.getElementById('locationTemp');
+                var currentDate = document.getElementById('currentDate');
+                
+                // getWeatherIcon(data.weather[0].icon);
+                
+                locationTitle.innerHTML = data.name + ", " + data.sys.country;
+                locationMainStatus.innerHTML = data.weather[0].description;
+                locationTemp.innerHTML = Math.floor(data.main.temp) + '&deg;';
+                currentDate.innerHTML = new Date();
+            } else if (data.cod == "404"){
+                showError('Location not found, please try again...');
+            }
+        }
+
+        function searchForLocation() {
+            if (locationInputEl.value.length <= 0) {
+                showError('Enter a location...');
+            } else {
+                var location = locationInputEl.value;
+                getWeather(location);
+            }
+        }
+
+        function saveToLocalStorage(location) {
+
+            if (!localStorage.lastSearch) {
+                localStorage.setItem("lastSearch", location);
+            } else {
+                localStorage.lastSearch = location;
+            }
+
+            console.log(localStorage.lastSearch);
+        }
+
+        // function getWeatherIcon(iconCode) {
+        //     var icon = document.createElement('img');
+        //     icon.src = `http://openweathermap.org/img/wn/${iconCode}@2x.png`;
+        //     locationMainStatus.appendChild(icon);
+        // }
+
+        function showError(message) {
+            var errorTextEl = document.getElementById('errorText');
+            errorBanner.style.display = "block";
+            errorTextEl.innerHTML = message;
+        }
+
+        searchLocationBtnEl.addEventListener('click', searchForLocation);
+
+    </script>
+
+</body>
+</html>
