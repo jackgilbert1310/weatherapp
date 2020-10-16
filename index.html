@@ -63,45 +63,34 @@
         </div>
 
         <div class="container">
+
             <div class="row mt-3">
-                
                 <div class="col-10">
                     <input type="text" placeholder="Enter Location..." id="locationInput" class="form-control">
                 </div>
                 <div class="col-2 pl-0">
                     <button id="searchLocation" class="btn btn-light">Search</button>
                 </div>
-                
             </div>
 
             <div class="row">
-
                 <div class="col-12 text-center details">
                     <h1 id="locationTitle"><span id="locationCountry"></span></h1>
-    
                     <p id="currentDate"></p>
-
                     <h2 id="locationTemp"></h2>
-                    
                     <h1 id="locationMainStatus"></h1>
-
                     <hr />
                 </div>
-
             </div>
 
             <div class="row">
-
                 <div class="col-12 text-center">
                     <h3>My Locations</h3>
                 </div>
-
             </div>
 
-        </div>
-
-    </div>
-
+        </div> <!-- /.container-->
+    </div> <!-- /#app -->
 
     <script>
         var app = document.getElementById('app');
@@ -111,16 +100,10 @@
 
         const API_KEY = "a079101f1ffd163a4a5b2b4b8e3cc1d4";
 
- 
-            console.log(localStorage.lastSearch);
-
-            if (localStorage.lastSearch) {
-                getWeather(localStorage.lastSearch);
-            }
+        if (localStorage.lastSearch) {
+            getWeather(localStorage.lastSearch);
+        }
         
-
-
-
         async function getWeather(location) {
             await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${API_KEY}&units=metric`)
                 .then(response => response.json())
@@ -128,8 +111,6 @@
         }
 
         function showData(data) {
-            console.log(data);
-            
             if (data.cod == "200") {
                 saveToLocalStorage(data.name);
                 errorBanner.style.display = "none";
@@ -159,14 +140,11 @@
         }
 
         function saveToLocalStorage(location) {
-
             if (!localStorage.lastSearch) {
                 localStorage.setItem("lastSearch", location);
             } else {
                 localStorage.lastSearch = location;
             }
-
-            console.log(localStorage.lastSearch);
         }
 
         // function getWeatherIcon(iconCode) {
@@ -182,7 +160,6 @@
         }
 
         searchLocationBtnEl.addEventListener('click', searchForLocation);
-
     </script>
 
 </body>
